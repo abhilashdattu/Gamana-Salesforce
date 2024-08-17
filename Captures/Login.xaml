@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Captures.Login"
+             Title="Login">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+            <Label 
+                Text="Welcome to Login Page"
+                FontSize="Large"
+                TextColor="Red"
+                VerticalOptions="Center" 
+                HorizontalOptions="Center" />
+
+            <!-- Username input -->
+            <Entry 
+                x:Name="UsernameEntry"
+                Placeholder="Username"
+                FontSize="Medium"
+                TextColor="Black"
+                VerticalOptions="Center" 
+                HorizontalOptions="FillAndExpand" />
+
+            <!-- Password input -->
+            <Entry 
+                x:Name="PasswordEntry"
+                Placeholder="Password"
+                IsPassword="True"
+                FontSize="Medium"
+                TextColor="Black"
+                VerticalOptions="Center" 
+                HorizontalOptions="FillAndExpand" />
+
+            <!-- Security Token input -->
+            <Entry 
+                x:Name="SecurityTokenEntry"
+                Placeholder="Security Token"
+                FontSize="Medium"
+                TextColor="Black"
+                VerticalOptions="Center" 
+                HorizontalOptions="FillAndExpand" />
+
+            <!-- Button to initiate Salesforce login -->
+            <Button 
+                BackgroundColor="Aqua"
+                TextColor="Black"
+                Text="Click for Salesforce login!"
+                VerticalOptions="Center" 
+                HorizontalOptions="Center"
+                Clicked="OnSalesforceLoginButtonClicked" />
+
+            <!-- CollectionView to display Salesforce metadata -->
+            <CollectionView x:Name="MetadataCollectionView" IsVisible="False">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="10" RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,*,*">
+                            <!-- Object Details -->
+                            <Label Text="{Binding label}" Grid.Row="0" Grid.Column="0" FontSize="Medium" />
+                            <Label Text="{Binding name}" Grid.Row="0" Grid.Column="1" FontSize="Medium" />
+                            <Label Text="{Binding keyPrefix}" Grid.Row="0" Grid.Column="2" FontSize="Medium" />
+
+                            <!-- Detailed information (e.g., records) -->
+                            <Label Text="Records:" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" FontSize="Small" TextColor="Gray" />
+                            <CollectionView ItemsSource="{Binding records}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Label Text="{Binding Name}" FontSize="Small" TextColor="Black" />
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

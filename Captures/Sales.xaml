@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Captures.Sales"
+             Title="Sales">
+    <ScrollView>
+        <VerticalStackLayout>
+        <Label 
+            Text="Thalupu thiyyi ra ungaa"
+            TextColor="red"
+            FontSize="Large"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" />
+
+        <!-- Label to display the access token or error messages -->
+        <Label x:Name="JsonTable"
+           Text=""
+           TextColor="Black"
+           FontSize="Medium"
+           VerticalOptions="Center" 
+           HorizontalOptions="Center" />
+   
+    <Label x:Name="OutputLabel"
+               Text=""
+               TextColor="Black"
+               FontSize="Medium"
+               VerticalOptions="Center" 
+               HorizontalOptions="Center" />
+    </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
