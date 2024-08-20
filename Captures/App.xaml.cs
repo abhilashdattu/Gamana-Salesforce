@@ -6,7 +6,7 @@
         {
             InitializeComponent();
 
-            MainPage = new Sales();
+            MainPage = new Login();
         }
     }
 }

@@ -4,28 +4,74 @@
              x:Class="Captures.Sales"
              Title="Sales">
     <ScrollView>
-        <VerticalStackLayout>
-        <Label 
-            Text="Thalupu thiyyi ra ungaa"
-            TextColor="red"
-            FontSize="Large"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+        <VerticalStackLayout Padding="20">
+            <Label 
+                Text="Salesforce Login"
+                TextColor="Black"
+                FontSize="Large"
+                VerticalOptions="Center" 
+                HorizontalOptions="Center" />
 
-        <!-- Label to display the access token or error messages -->
-        <Label x:Name="JsonTable"
-           Text=""
-           TextColor="Black"
-           FontSize="Medium"
-           VerticalOptions="Center" 
-           HorizontalOptions="Center" />
-   
-    <Label x:Name="OutputLabel"
-               Text=""
-               TextColor="Black"
-               FontSize="Medium"
-               VerticalOptions="Center" 
-               HorizontalOptions="Center" />
-    </VerticalStackLayout>
+            <Entry 
+                x:Name="UsernameEntry"
+                Placeholder="Enter Username"
+                Keyboard="Email"
+                TextColor="Black"
+                VerticalOptions="Center" 
+                HorizontalOptions="FillAndExpand" />
+
+            <Entry 
+                x:Name="PasswordEntry"
+                Placeholder="Enter Password"
+                IsPassword="True"
+                TextColor="Black"
+                VerticalOptions="Center" 
+                HorizontalOptions="FillAndExpand" />
+
+            <Entry 
+                x:Name="ConsumerKeyEntry"
+                Placeholder="Enter Consumer Key"
+                TextColor="Black"
+                VerticalOptions="Center" 
+                HorizontalOptions="FillAndExpand" />
+
+            <Entry 
+                x:Name="ConsumerSecretEntry"
+                Placeholder="Enter Consumer Secret"
+                IsPassword="True"
+                TextColor="Black"
+                VerticalOptions="Center" 
+                HorizontalOptions="FillAndExpand" />
+
+            <Entry 
+                x:Name="DomainNameEntry"
+                Placeholder="Enter Domain Name"
+                TextColor="Black"
+                VerticalOptions="Center" 
+                HorizontalOptions="FillAndExpand" />
+
+            <Button 
+                Text="Login"
+                Clicked="OnLoginButtonClicked" 
+                VerticalOptions="Center" 
+                HorizontalOptions="FillAndExpand" />
+
+            <!-- ActivityIndicator to show loading state -->
+            <ActivityIndicator x:Name="LoadingIndicator"
+                               IsRunning="False"
+                               Color="Blue"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center"
+                               HeightRequest="50"
+                               WidthRequest="50" />
+
+            <!-- Label to display output -->
+            <Label x:Name="OutputLabel"
+                   Text=""
+                   TextColor="Black"
+                   FontSize="Medium"
+                   VerticalOptions="Center" 
+                   HorizontalOptions="Center" />
+        </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

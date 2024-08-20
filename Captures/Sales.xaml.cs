@@ -11,41 +11,47 @@ namespace Captures
     {
         private readonly HttpClient _httpClient;
 
-        // Credentials
-        private readonly string USERNAME = "krishnavamsiott1045@gmail.com";
-        private readonly string PASSWORD = "Gamana@123yFbgOvs9C5apjorR59WyJJDO";
-        private readonly string CONSUMER_KEY = "3MVG9VMBZCsTL9hlHgf0XlaebsnPGz9PGXNm.gOGUpbi84nsJ0rsa2kNe.lCUjr1oGBScAFs03nxHJqegWb74";
-        private readonly string CONSUMER_SECRET = "58EC207B519179198BBBAF145A0CBB255377D2AE2BE3CC3D2062E92F7C16F344";
-        private readonly string DOMAIN_NAME = "https://gamana31-dev-ed.develop.my.salesforce.com";
-
-        // Constructor
         public Sales()
         {
             InitializeComponent();
             _httpClient = new HttpClient();
-
-            // Call the method to get access token and retrieve all object data
-            GetAccessTokenAndRetrieveAllObjectsAsync();
         }
 
-        public async Task GetAccessTokenAndRetrieveAllObjectsAsync()
+        private async void OnLoginButtonClicked(object sender, EventArgs e)
         {
+            var username = UsernameEntry.Text;
+            var password = PasswordEntry.Text;
+            var consumerKey = ConsumerKeyEntry.Text;
+            var consumerSecret = ConsumerSecretEntry.Text;
+            var domainName = DomainNameEntry.Text;
+
+            if (string.IsNullOrWhiteSpace(username) ||
+                string.IsNullOrWhiteSpace(password) ||
+                string.IsNullOrWhiteSpace(consumerKey) ||
+                string.IsNullOrWhiteSpace(consumerSecret) ||
+                string.IsNullOrWhiteSpace(domainName))
+            {
+                await DisplayAlert("Error", "Please fill in all fields.", "OK");
+                return;
+            }
+
             OutputLabel.Text = "Attempting to obtain access token...";
+            LoadingIndicator.IsRunning = true; // Show the loading indicator
 
             var parameters = new Dictionary<string, string>
             {
                 { "grant_type", "password" },
-                { "client_id", CONSUMER_KEY },
-                { "client_secret", CONSUMER_SECRET },
-                { "username", USERNAME },
-                { "password", PASSWORD }
+                { "client_id", consumerKey },
+                { "client_secret", consumerSecret },
+                { "username", username },
+                { "password", password }
             };
 
             var content = new FormUrlEncodedContent(parameters);
 
             try
             {
-                var response = await _httpClient.PostAsync($"{DOMAIN_NAME}/services/oauth2/token", content);
+                var response = await _httpClient.PostAsync($"{domainName}/services/oauth2/token", content);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -67,11 +73,16 @@ namespace Captures
             {
                 OutputLabel.Text = $"Exception occurred while trying to obtain access token: {ex.Message}";
             }
+            finally
+            {
+                LoadingIndicator.IsRunning = false; // Hide the loading indicator
+            }
         }
 
         public async Task RetrieveAllObjectsDataAsync(string instanceUrl, string accessToken)
         {
             OutputLabel.Text = "Retrieving all objects...";
+            LoadingIndicator.IsRunning = true; // Show the loading indicator
 
             try
             {
@@ -119,6 +130,10 @@ namespace Captures
             catch (Exception ex)
             {
                 OutputLabel.Text = $"Exception occurred while trying to retrieve objects: {ex.Message}";
+            }
+            finally
+            {
+                LoadingIndicator.IsRunning = false; // Hide the loading indicator
             }
         }
 

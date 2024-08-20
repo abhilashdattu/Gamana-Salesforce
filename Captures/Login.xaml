@@ -49,8 +49,26 @@
                 HorizontalOptions="Center"
                 Clicked="OnSalesforceLoginButtonClicked" />
 
+            <Button 
+                Text="Save to Google Drive"
+                Clicked="OnSaveToGoogleDriveButtonClicked"
+                HorizontalOptions="Center" 
+                VerticalOptions="Center" />
+
+            <!-- ActivityIndicator to show loading state -->
+            <ActivityIndicator 
+                x:Name="LoadingIndicator"
+                IsRunning="False"
+                Color="Blue"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                HeightRequest="50"
+                WidthRequest="50" />
+
             <!-- CollectionView to display Salesforce metadata -->
-            <CollectionView x:Name="MetadataCollectionView" IsVisible="False">
+            <CollectionView 
+                x:Name="MetadataCollectionView" 
+                IsVisible="False">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Grid Padding="10" RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,*,*">

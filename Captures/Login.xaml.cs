@@ -1,9 +1,15 @@
-using System.Collections.ObjectModel;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Drive.v3;
+using Google.Apis.Services;
+using Google.Apis.Util.Store;
+using System.IO;
+using System.Threading;
+using Google.Apis.Drive.v3.Data;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Text;
-using Microsoft.UI;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Xml.Linq;
+using System.Collections.ObjectModel;
+using Microsoft.Maui.Controls;
 
 namespace Captures
 {
@@ -41,6 +47,8 @@ namespace Captures
 
             var content = new StringContent(JsonSerializer.Serialize(requestData), Encoding.UTF8, "application/json");
 
+            LoadingIndicator.IsRunning = true; // Show the loading indicator
+
             try
             {
                 var response = await _httpClient.PostAsync("http://localhost:3000/fetch-metadata", content);
@@ -56,11 +64,6 @@ namespace Captures
                     // Add the new data to the CollectionView
                     foreach (var obj in customObjects)
                     {
-                        // Fetch records for each custom object
-                        var records = await FetchRecordsForObject(obj.name);
-
-                        // Add records to the object and then to the collection
-                        obj.records = records;
                         CustomObjects.Add(obj);
                     }
 
@@ -76,6 +79,29 @@ namespace Captures
             catch (Exception ex)
             {
                 await DisplayAlert("Exception", $"Exception: {ex.Message}", "OK");
+            }
+            finally
+            {
+                LoadingIndicator.IsRunning = false; // Hide the loading indicator
+            }
+        }
+
+        private async void OnCustomObjectSelected(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedObject = (CustomObject)e.CurrentSelection.FirstOrDefault();
+
+            if (selectedObject != null && selectedObject.records == null)
+            {
+                LoadingIndicator.IsRunning = true; // Show the loading indicator
+
+                try
+                {
+                    selectedObject.records = await FetchRecordsForObject(selectedObject.name);
+                }
+                finally
+                {
+                    LoadingIndicator.IsRunning = false; // Hide the loading indicator
+                }
             }
         }
 
@@ -100,6 +126,65 @@ namespace Captures
             {
                 return new List<Record>(); // Return empty list on exception
             }
+        }
+
+        private static readonly string[] Scopes = { DriveService.Scope.DriveFile };
+        private static readonly string ApplicationName = "Your App Name";
+
+        private async void OnSaveToGoogleDriveButtonClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                var driveService = AuthenticateGoogleDrive();
+
+                var fileMetadata = new Google.Apis.Drive.v3.Data.File
+                {
+                    Name = "CustomObjects.json",
+                    Parents = new List<string> { "appDataFolder" } // Uploads to app data folder
+                };
+
+                using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(CustomObjects))))
+                {
+                    var request = driveService.Files.Create(fileMetadata, stream, "application/json");
+                    request.Fields = "id";
+                    var file = await request.UploadAsync();
+
+                    if (file.Status == Google.Apis.Upload.UploadStatus.Completed)
+                    {
+                        await DisplayAlert("Success", "Custom objects saved to Google Drive.", "OK");
+                    }
+                    else
+                    {
+                        await DisplayAlert("Error", "Failed to save file to Google Drive.", "OK");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
+            }
+        }
+
+        private DriveService AuthenticateGoogleDrive()
+        {
+            UserCredential credential;
+
+            using (var stream = new FileStream("client_secrets.json", FileMode.Open, FileAccess.Read))
+            {
+                string credPath = "token.json";
+                credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
+                    GoogleClientSecrets.Load(stream).Secrets,
+                    Scopes,
+                    "user",
+                    CancellationToken.None,
+                    new FileDataStore(credPath, true)).Result;
+            }
+
+            return new DriveService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = ApplicationName,
+            });
         }
 
         public class CustomObject
